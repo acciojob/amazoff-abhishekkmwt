@@ -41,8 +41,8 @@ public class OrderRepository {
     public DeliveryPartner getPartnerById(String partnerId){
         return partnerDb.get(partnerId);
     }
-    public int getOrderCountByPartnerId(String partnerId){
-        int orderCount=0;
+    public Integer getOrderCountByPartnerId(String partnerId){
+        Integer orderCount=0;
         if(partnerDb.containsKey(partnerId)){
             orderCount=partnerDb.get(partnerId).getNumberOfOrders();
         }
@@ -61,15 +61,18 @@ public class OrderRepository {
         return ordersList;
     }
 
-    public int getCountOfUnassignedOrders(){
+    public Integer getCountOfUnassignedOrders(){
           return orderDb.size()-assignedDb.size();
     }
 
-    public int getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId){
+    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId){
          List<String> list=pairDb.get(partnerId);
-         int count=0;
+         Integer count=0;
+         Integer hr=Integer.valueOf(time.substring(0,2));
+         Integer min=Integer.valueOf(time.substring(3));
+         Integer currTime=hr*60+min;
          for(String s: list){
-             if(orderDb.get(s).getDeliveryTime() <= new Order().time(time)){
+             if(currTime < orderDb.get(s).getDeliveryTime()){
                  count++;
              }
          }
@@ -77,7 +80,7 @@ public class OrderRepository {
     }
 
     public String getLastDeliveryTimeByPartnerId(String partnerId){
-      int larTime =0;
+      Integer larTime =0;
       List<String> list=pairDb.get(partnerId);
         for(String s: list){
             if(orderDb.get(s).getDeliveryTime() > larTime){
