@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public class OrderRepository {
      HashMap<String,Order> orderDb = new HashMap<>();
-     HashMap<String,Order> unAssignedDb =new HashMap<>();
+     HashMap<String,String> assignedDb =new HashMap<>();
     HashMap<String,DeliveryPartner> partnerDb = new HashMap<>();
     HashMap<String, List<String>> pairDb =new HashMap<>();
     public void addOrder(Order order){
@@ -27,6 +27,7 @@ public class OrderRepository {
         }
         orders.add(orderId);
         pairDb.put(partnerId,orders);
+        assignedDb.put(orderId,partnerId);
     }
 
     public Order getOrderById(String orderId){
@@ -53,7 +54,7 @@ public class OrderRepository {
     }
 
     public int getCountOfUnassignedOrders(){
-          return unAssignedDb.size();
+          return orderDb.size()-assignedDb.size();
     }
 
     public int getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId){
@@ -90,9 +91,11 @@ public class OrderRepository {
     }
 
     public void deletePartnerById(String partnerId){
-       List<String> orders=pairDb.get(partnerId);
-       for(String order : orders){
-           unAssignedDb.put(order,orderDb.get(order));
+       for(String s : assignedDb.keySet()){
+           if(assignedDb.get(s).equals(partnerId))
+           {
+               assignedDb.remove(s);
+           }
        }
        pairDb.remove(partnerId);
        partnerDb.remove(partnerId);
