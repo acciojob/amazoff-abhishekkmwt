@@ -27,6 +27,10 @@ public class OrderRepository {
         }
         orders.add(orderId);
         pairDb.put(partnerId,orders);
+
+        DeliveryPartner partner = partnerDb.get(partnerId);
+        partner.setNumberOfOrders(orders.size());
+
         assignedDb.put(orderId,partnerId);
     }
 
@@ -38,7 +42,11 @@ public class OrderRepository {
         return partnerDb.get(partnerId);
     }
     public int getOrderCountByPartnerId(String partnerId){
-        return pairDb.get(partnerId).size();
+        int orderCount=0;
+        if(partnerDb.containsKey(partnerId)){
+            orderCount=partnerDb.get(partnerId).getNumberOfOrders();
+        }
+        return orderCount;
     }
 
     public List<String> getOrdersByPartnerId(String partnerId){
@@ -97,8 +105,8 @@ public class OrderRepository {
                assignedDb.remove(s);
            }
        }
-       pairDb.remove(partnerId);
-       partnerDb.remove(partnerId);
+       if(pairDb.containsKey(partnerId)) pairDb.remove(partnerId);
+       if(partnerDb.containsKey(partnerId))partnerDb.remove(partnerId);
     }
 
     public void deleteOrderById(String orderId){
